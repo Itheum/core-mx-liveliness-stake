@@ -6,9 +6,9 @@
 
 // Init:                                 1
 // Upgrade:                              1
-// Endpoints:                            5
+// Endpoints:                           21
 // Async Callback (empty):               1
-// Total number of exported functions:   8
+// Total number of exported functions:  24
 
 #![no_std]
 
@@ -20,11 +20,27 @@ multiversx_sc_wasm_adapter::endpoints! {
     (
         init => init
         upgrade => upgrade
+        claimRewards => claim_rewards
         setContractStateActive => set_contract_state_active
         setContractStateInactive => set_contract_state_inactive
+        setMaxApr => set_max_apr
+        setRewardsTokenIdentifier => set_rewards_token_identifier
+        setPerBlockRewardAmount => set_per_block_rewards
+        topUpRewards => top_up_rewards
+        withdrawRewards => withdraw_rewards
+        startProduceRewards => start_produce_rewards
+        endProduceRewards => end_produce_rewards
         setAdministrator => set_administrator
         getContractState => contract_state
+        rewardsState => rewards_state
         getAdministrator => administrator
+        bondContractAddress => bond_contract_address
+        rewardsReserve => rewards_reserve
+        accumulatedRewards => accumulated_rewards
+        rewardsTokenIdentifier => rewards_token_identifier
+        rewardsPerBlock => rewards_per_block
+        lastRewardBlockNonce => last_reward_block_nonce
+        maxApr => max_apr
     )
 }
 

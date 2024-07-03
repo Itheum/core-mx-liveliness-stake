@@ -99,6 +99,71 @@ where
             .original_result()
     }
 
+    pub fn set_rewards_token_identifier<
+        Arg0: ProxyArg<TokenIdentifier<Env::Api>>,
+    >(
+        self,
+        token_identifier: Arg0,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("setRewardsTokenIdentifier")
+            .argument(&token_identifier)
+            .original_result()
+    }
+
+    pub fn set_per_block_rewards<
+        Arg0: ProxyArg<BigUint<Env::Api>>,
+    >(
+        self,
+        rewards_per_block: Arg0,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("setPerBlockRewards")
+            .argument(&rewards_per_block)
+            .original_result()
+    }
+
+    pub fn top_up_rewards(
+        self,
+    ) -> TxTypedCall<Env, From, To, (), Gas, ()> {
+        self.wrapped_tx
+            .raw_call("topUpRewards")
+            .original_result()
+    }
+
+    pub fn withdraw_rewards<
+        Arg0: ProxyArg<BigUint<Env::Api>>,
+    >(
+        self,
+        amount: Arg0,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("withdrawRewards")
+            .argument(&amount)
+            .original_result()
+    }
+
+    pub fn start_produce_rewards(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("startProduceRewards")
+            .original_result()
+    }
+
+    pub fn end_produce_rewards(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("endProduceRewards")
+            .original_result()
+    }
+
     pub fn set_administrator<
         Arg0: ProxyArg<ManagedAddress<Env::Api>>,
     >(
@@ -127,6 +192,60 @@ where
         self.wrapped_tx
             .payment(NotPayable)
             .raw_call("getAdministrator")
+            .original_result()
+    }
+
+    pub fn rewards_state(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, State> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("rewardsState")
+            .original_result()
+    }
+
+    pub fn rewards_reserve(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, BigUint<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("rewardsReserve")
+            .original_result()
+    }
+
+    pub fn accumulated_rewards(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, BigUint<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("accumulatedRewards")
+            .original_result()
+    }
+
+    pub fn rewards_token_identifier(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, TokenIdentifier<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("rewardsTokenIdentifier")
+            .original_result()
+    }
+
+    pub fn rewards_per_block(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, BigUint<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("rewardsPerBlock")
+            .original_result()
+    }
+
+    pub fn last_reward_block_nonce(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, u64> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("lastRewardBlockNonce")
             .original_result()
     }
 }

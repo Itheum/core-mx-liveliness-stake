@@ -23,7 +23,11 @@ pub enum State {
     Active,
 }
 
+pub const BLOCK_TIME: u64 = 6;
+pub const BLOCKS_IN_YEAR: u64 = 31_536_000 / BLOCK_TIME;
+
 pub const DIVISION_SAFETY_CONST: u64 = 1_000_000_000;
+pub const MAX_PERCENT: u64 = 10_000;
 
 #[multiversx_sc::module]
 pub trait ConfigModule: events::EventsModule {
@@ -67,6 +71,11 @@ pub trait ConfigModule: events::EventsModule {
     }
 
     #[inline]
+    fn can_produce_rewards(&self) -> bool {
+        self.is_state_active(self.rewards_state().get())
+    }
+
+    #[inline]
     fn is_state_active(&self, state: State) -> bool {
         state == State::Active
     }
@@ -75,7 +84,15 @@ pub trait ConfigModule: events::EventsModule {
     #[storage_mapper("contract_state")]
     fn contract_state(&self) -> SingleValueMapper<State>;
 
+    #[view(rewardsState)]
+    #[storage_mapper("rewards_state")]
+    fn rewards_state(&self) -> SingleValueMapper<State>;
+
     #[view(getAdministrator)]
     #[storage_mapper("administrator")]
     fn administrator(&self) -> SingleValueMapper<ManagedAddress>;
+
+    #[view(bondContractAddress)]
+    #[storage_mapper("bond_contract_address")]
+    fn bond_contract_address(&self) -> SingleValueMapper<ManagedAddress>;
 }
