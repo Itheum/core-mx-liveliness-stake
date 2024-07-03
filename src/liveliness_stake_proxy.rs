@@ -71,3 +71,69 @@ where
             .original_result()
     }
 }
+
+#[rustfmt::skip]
+impl<Env, From, To, Gas> CoreMxLivelinessStakeProxyMethods<Env, From, To, Gas>
+where
+    Env: TxEnv,
+    Env::Api: VMApi,
+    From: TxFrom<Env>,
+    To: TxTo<Env>,
+    Gas: TxGas<Env>,
+{
+    pub fn set_contract_state_active(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("setContractStateActive")
+            .original_result()
+    }
+
+    pub fn set_contract_state_inactive(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("setContractStateInactive")
+            .original_result()
+    }
+
+    pub fn set_administrator<
+        Arg0: ProxyArg<ManagedAddress<Env::Api>>,
+    >(
+        self,
+        administrator: Arg0,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("setAdministrator")
+            .argument(&administrator)
+            .original_result()
+    }
+
+    pub fn contract_state(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, State> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("getContractState")
+            .original_result()
+    }
+
+    pub fn administrator(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ManagedAddress<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("getAdministrator")
+            .original_result()
+    }
+}
+
+#[type_abi]
+#[derive(TopEncode, TopDecode)]
+pub enum State {
+    Inactive,
+    Active,
+}
