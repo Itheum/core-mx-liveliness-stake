@@ -1,0 +1,4 @@
+[settings]
+
+[[proxy]]
+path = "src/liveliness_stake_proxy.rs"

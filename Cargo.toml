@@ -1,0 +1,24 @@
+[package]
+name = "core-mx-liveliness-stake"
+version = "0.0.0"
+authors = ["you"]
+edition = "2021"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies.multiversx-sc]
+version = "0.50.5"
+
+[dependencies]
+core-mx-life-bonding-sc = {git ="https://github.com/Itheum/core-mx-life-bonding-sc",branch = "develop"}
+
+[dev-dependencies.multiversx-sc-scenario]
+version = "0.50.5"
+
+[workspace]
+members = [
+    ".",
+    "meta",
+]
