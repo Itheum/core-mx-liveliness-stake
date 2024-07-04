@@ -23,7 +23,7 @@ checksum = "cf4b9d6a944f767f8e5e0db018570623c85f3d925ac718db4e06d0187adb21c1"
 [[package]]
 name = "core-mx-life-bonding-sc"
 version = "2.0.0"
-source = "git+https://github.com/Itheum/core-mx-life-bonding-sc?branch=develop#2077984fe7014cdb7de0bf0d3df00b94e58e37ad"
+source = "git+https://github.com/Itheum/core-mx-life-bonding-sc?branch=develop#ffd04b3ef0dff6f22b7d348a0875d444916d2e5e"
 dependencies = [
  "multiversx-sc",
 ]

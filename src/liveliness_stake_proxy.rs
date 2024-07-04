@@ -288,6 +288,22 @@ where
             .raw_call("maxApr")
             .original_result()
     }
+
+    pub fn claimable_rewards<
+        Arg0: ProxyArg<ManagedAddress<Env::Api>>,
+        Arg1: ProxyArg<Option<bool>>,
+    >(
+        self,
+        caller: Arg0,
+        opt_bypass_liveliness: Arg1,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, BigUint<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("claimableRewards")
+            .argument(&caller)
+            .argument(&opt_bypass_liveliness)
+            .original_result()
+    }
 }
 
 #[type_abi]

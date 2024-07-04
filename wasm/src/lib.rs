@@ -6,9 +6,9 @@
 
 // Init:                                 1
 // Upgrade:                              1
-// Endpoints:                           21
+// Endpoints:                           22
 // Async Callback (empty):               1
-// Total number of exported functions:  24
+// Total number of exported functions:  25
 
 #![no_std]
 
@@ -41,6 +41,7 @@ multiversx_sc_wasm_adapter::endpoints! {
         rewardsPerBlock => rewards_per_block
         lastRewardBlockNonce => last_reward_block_nonce
         maxApr => max_apr
+        claimableRewards => claimable_rewards
     )
 }
 
