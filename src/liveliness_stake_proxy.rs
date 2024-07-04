@@ -81,6 +81,15 @@ where
     To: TxTo<Env>,
     Gas: TxGas<Env>,
 {
+    pub fn claim_rewards(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("claimRewards")
+            .original_result()
+    }
+
     pub fn set_contract_state_active(
         self,
     ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
@@ -96,6 +105,19 @@ where
         self.wrapped_tx
             .payment(NotPayable)
             .raw_call("setContractStateInactive")
+            .original_result()
+    }
+
+    pub fn set_max_apr<
+        Arg0: ProxyArg<BigUint<Env::Api>>,
+    >(
+        self,
+        max_apr: Arg0,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("setMaxApr")
+            .argument(&max_apr)
             .original_result()
     }
 
@@ -116,12 +138,12 @@ where
         Arg0: ProxyArg<BigUint<Env::Api>>,
     >(
         self,
-        rewards_per_block: Arg0,
+        per_block_amount: Arg0,
     ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
         self.wrapped_tx
             .payment(NotPayable)
-            .raw_call("setPerBlockRewards")
-            .argument(&rewards_per_block)
+            .raw_call("setPerBlockRewardAmount")
+            .argument(&per_block_amount)
             .original_result()
     }
 
@@ -186,6 +208,15 @@ where
             .original_result()
     }
 
+    pub fn rewards_state(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, State> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("rewardsState")
+            .original_result()
+    }
+
     pub fn administrator(
         self,
     ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ManagedAddress<Env::Api>> {
@@ -195,12 +226,12 @@ where
             .original_result()
     }
 
-    pub fn rewards_state(
+    pub fn bond_contract_address(
         self,
-    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, State> {
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ManagedAddress<Env::Api>> {
         self.wrapped_tx
             .payment(NotPayable)
-            .raw_call("rewardsState")
+            .raw_call("bondContractAddress")
             .original_result()
     }
 
@@ -246,6 +277,15 @@ where
         self.wrapped_tx
             .payment(NotPayable)
             .raw_call("lastRewardBlockNonce")
+            .original_result()
+    }
+
+    pub fn max_apr(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, BigUint<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("maxApr")
             .original_result()
     }
 }
