@@ -43,9 +43,6 @@ where
             .accumulated_rewards()
             .set(self.accumulated_rewards.clone());
         self.sc_ref
-            .rewards_token_identifier()
-            .set(self.rewards_token_identifier.clone());
-        self.sc_ref
             .rewards_per_block()
             .set(self.rewards_per_block.clone());
         self.sc_ref
