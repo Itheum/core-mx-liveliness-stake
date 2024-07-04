@@ -1,6 +1,6 @@
 use core_mx_life_bonding_sc::errors::ERR_ALREADY_IN_STORAGE;
 
-use crate::events;
+use crate::{events, storage};
 
 multiversx_sc::imports!();
 multiversx_sc::derive_imports!();
@@ -30,7 +30,7 @@ pub const DIVISION_SAFETY_CONST: u64 = 1_000_000_000;
 pub const MAX_PERCENT: u64 = 10_000;
 
 #[multiversx_sc::module]
-pub trait ConfigModule: events::EventsModule {
+pub trait ConfigModule: events::EventsModule + storage::StorageModule {
     #[only_owner]
     #[endpoint(setAdministrator)]
     fn set_administrator(&self, administrator: ManagedAddress) {
@@ -64,6 +64,18 @@ pub trait ConfigModule: events::EventsModule {
         let mut is_ready = true;
 
         if !self.is_state_active(self.contract_state().get()) {
+            is_ready = false;
+        }
+
+        if self.bond_contract_address().is_empty() {
+            is_ready = false;
+        }
+
+        if self.rewards_token_identifier().is_empty() {
+            is_ready = false;
+        }
+
+        if self.rewards_per_block().is_empty() {
             is_ready = false;
         }
 
