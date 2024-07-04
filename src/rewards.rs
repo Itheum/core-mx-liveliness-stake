@@ -20,7 +20,7 @@ pub trait RewardsModule:
         }
     }
 
-    // not used (usefull to enforce a max APR)
+    // not used (useful to enforce a max APR)
     fn get_amount_apr_bounded(&self, amount: &BigUint) -> BigUint {
         let max_apr = self.max_apr().get();
         amount * &max_apr / MAX_PERCENT / BLOCKS_IN_YEAR
@@ -87,7 +87,8 @@ pub trait RewardsModule:
 
         let user_share = user_stake_amount * DIVISION_SAFETY_CONST / total_staked_amount;
 
-        let claimable_rewards = user_share / &storage_cache.accumulated_rewards; // accumulated_rewards has DIVISION_SAFETY applied
+        let claimable_rewards =
+            (user_share * &storage_cache.accumulated_rewards) / DIVISION_SAFETY_CONST;
 
         if liveliness_score >= 95_00u64 || bypass_liveliness {
             claimable_rewards
