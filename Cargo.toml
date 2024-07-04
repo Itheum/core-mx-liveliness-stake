@@ -17,6 +17,9 @@ core-mx-life-bonding-sc = {git ="https://github.com/Itheum/core-mx-life-bonding-
 [dev-dependencies.multiversx-sc-scenario]
 version = "0.50.5"
 
+[dev-dependencies]
+num-traits= "0.2.19"
+
 [workspace]
 members = [
     ".",

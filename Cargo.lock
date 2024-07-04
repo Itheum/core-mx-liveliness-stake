@@ -357,6 +357,7 @@ dependencies = [
  "core-mx-life-bonding-sc",
  "multiversx-sc",
  "multiversx-sc-scenario",
+ "num-traits",
 ]
 
 [[package]]
