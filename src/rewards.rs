@@ -51,7 +51,7 @@ pub trait RewardsModule:
         self,
         caller: &ManagedAddress,
         storage_cache: &mut StorageCache<Self>,
-        timestamp: Option<u64>,
+        bypass_liveliness: bool,
     ) -> BigUint {
         let total_staked_amount = self
             .tx()
@@ -73,7 +73,7 @@ pub trait RewardsModule:
             .tx()
             .to(self.bond_contract_address().get())
             .typed(core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy)
-            .get_address_bonds_avg_score(caller, timestamp)
+            .get_address_bonds_avg_score(caller)
             .returns(ReturnsResult)
             .sync_call();
 
@@ -89,6 +89,10 @@ pub trait RewardsModule:
 
         let claimable_rewards = user_share / &storage_cache.accumulated_rewards; // accumulated_rewards has DIVISION_SAFETY applied
 
-        liveliness_score * claimable_rewards / MAX_PERCENT
+        if liveliness_score >= 95_00u64 || bypass_liveliness {
+            claimable_rewards
+        } else {
+            (liveliness_score * claimable_rewards) / MAX_PERCENT
+        }
     }
 }
