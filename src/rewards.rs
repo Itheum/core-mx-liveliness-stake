@@ -15,6 +15,17 @@ pub trait RewardsModule:
         let extra_rewards = self.calculate_rewards_since_last_allocation(storage_cache);
 
         if extra_rewards > BigUint::zero() {
+            let total_staked_amount = self
+                .tx()
+                .to(self.bond_contract_address().get())
+                .typed(core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy)
+                .total_bond_amount()
+                .returns(ReturnsResult)
+                .sync_call();
+
+            let increment = &extra_rewards * DIVISION_SAFETY_CONST / &total_staked_amount;
+
+            storage_cache.rewards_per_share += &increment;
             storage_cache.accumulated_rewards += &extra_rewards;
             storage_cache.rewards_reserve -= &extra_rewards;
         }
@@ -85,15 +96,19 @@ pub trait RewardsModule:
             return BigUint::zero();
         }
 
-        let user_share = user_stake_amount * DIVISION_SAFETY_CONST / total_staked_amount;
+        let user_last_rewards_per_share = self.address_last_reward_per_share(caller).get();
 
-        let claimable_rewards =
-            (user_share * &storage_cache.accumulated_rewards) / DIVISION_SAFETY_CONST;
+        let user_rewards = user_stake_amount
+            * (&storage_cache.rewards_per_share - &user_last_rewards_per_share)
+            / DIVISION_SAFETY_CONST;
+
+        self.address_last_reward_per_share(caller)
+            .set(storage_cache.rewards_per_share.clone());
 
         if liveliness_score >= 95_00u64 || bypass_liveliness {
-            claimable_rewards
+            user_rewards
         } else {
-            (liveliness_score * claimable_rewards) / MAX_PERCENT
+            (liveliness_score * user_rewards) / MAX_PERCENT
         }
     }
 }

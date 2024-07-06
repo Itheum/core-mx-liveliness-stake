@@ -186,6 +186,19 @@ where
             .original_result()
     }
 
+    pub fn set_bond_contract_address<
+        Arg0: ProxyArg<ManagedAddress<Env::Api>>,
+    >(
+        self,
+        bond_contract_address: Arg0,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("setBondContractAddress")
+            .argument(&bond_contract_address)
+            .original_result()
+    }
+
     pub fn set_administrator<
         Arg0: ProxyArg<ManagedAddress<Env::Api>>,
     >(
@@ -280,6 +293,28 @@ where
             .original_result()
     }
 
+    pub fn rewards_per_share(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, BigUint<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("rewardsPerShare")
+            .original_result()
+    }
+
+    pub fn address_last_reward_per_share<
+        Arg0: ProxyArg<ManagedAddress<Env::Api>>,
+    >(
+        self,
+        address: Arg0,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, BigUint<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("addresLastRewardPerShare")
+            .argument(&address)
+            .original_result()
+    }
+
     pub fn max_apr(
         self,
     ) -> TxTypedCall<Env, From, To, NotPayable, Gas, BigUint<Env::Api>> {
@@ -304,6 +339,15 @@ where
             .argument(&opt_bypass_liveliness)
             .original_result()
     }
+
+    pub fn contract_details(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ContractDetails<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("contractDetails")
+            .original_result()
+    }
 }
 
 #[type_abi]
@@ -311,4 +355,18 @@ where
 pub enum State {
     Inactive,
     Active,
+}
+
+#[type_abi]
+#[derive(TopEncode, TopDecode)]
+pub struct ContractDetails<Api>
+where
+    Api: ManagedTypeApi,
+{
+    pub rewards_reserve: BigUint<Api>,
+    pub accumulated_rewards: BigUint<Api>,
+    pub rewards_token_identifier: TokenIdentifier<Api>,
+    pub rewards_per_block: BigUint<Api>,
+    pub last_reward_block_nonce: u64,
+    pub max_apr: BigUint<Api>,
 }

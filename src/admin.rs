@@ -61,7 +61,7 @@ pub trait AdminModule:
         let mut storage_cache = StorageCache::new(self);
         self.generate_aggregated_rewards(&mut storage_cache);
 
-        self.rewards_per_block().set(per_block_amount);
+        storage_cache.rewards_per_block = per_block_amount;
         // self.rewards_per_block_event(rewards_per_block);
     }
 
@@ -79,8 +79,7 @@ pub trait AdminModule:
         let mut storage_cache = StorageCache::new(self);
         self.generate_aggregated_rewards(&mut storage_cache);
 
-        self.rewards_reserve()
-            .update(|value| *value += payment.amount);
+        storage_cache.rewards_reserve += payment.amount;
     }
 
     #[endpoint(withdrawRewards)]
@@ -95,7 +94,7 @@ pub trait AdminModule:
             "Insufficient rewards reserve"
         );
 
-        self.rewards_reserve().update(|value| *value -= amount);
+        storage_cache.rewards_reserve -= amount;
     }
 
     #[endpoint(startProduceRewards)]
@@ -114,5 +113,11 @@ pub trait AdminModule:
         self.generate_aggregated_rewards(&mut storage_cache);
 
         self.rewards_state().set(State::Inactive);
+    }
+
+    #[endpoint(setBondContractAddress)]
+    fn set_bond_contract_address(&self, bond_contract_address: ManagedAddress) {
+        only_privileged!(self, ERR_NOT_PRIVILEGED);
+        self.bond_contract_address().set(bond_contract_address);
     }
 }

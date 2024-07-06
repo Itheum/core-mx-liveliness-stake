@@ -42,11 +42,15 @@ pub trait CoreMxLivelinessStake:
 
         let rewards = self.calculate_caller_share_in_rewards(&caller, &mut storage_cache, false);
 
-        storage_cache.accumulated_rewards -= &rewards;
+        if rewards > BigUint::zero() {
+            storage_cache.accumulated_rewards -= &rewards;
 
-        self.send().direct_non_zero_esdt_payment(
-            &caller,
-            &EsdtTokenPayment::new(self.rewards_token_identifier().get(), 0u64, rewards),
-        );
+            self.send().direct_non_zero_esdt_payment(
+                &caller,
+                &EsdtTokenPayment::new(self.rewards_token_identifier().get(), 0u64, rewards),
+            );
+        } else {
+            sc_panic!("No rewards to claim")
+        }
     }
 }

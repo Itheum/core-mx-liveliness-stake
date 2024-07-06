@@ -23,6 +23,15 @@ pub trait StorageModule {
     #[storage_mapper("last_reward_block_nonce")]
     fn last_reward_block_nonce(&self) -> SingleValueMapper<u64>;
 
+    #[view(rewardsPerShare)]
+    #[storage_mapper("rewards_per_share")]
+    fn rewards_per_share(&self) -> SingleValueMapper<BigUint>;
+
+    #[view(addresLastRewardPerShare)]
+    #[storage_mapper("address_last_reward_per_share")]
+    fn address_last_reward_per_share(&self, address: &ManagedAddress)
+        -> SingleValueMapper<BigUint>;
+
     #[view(maxApr)]
     #[storage_mapper("max_apr")]
     fn max_apr(&self) -> SingleValueMapper<BigUint>;

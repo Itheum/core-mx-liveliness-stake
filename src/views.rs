@@ -3,6 +3,16 @@ use crate::{config, contexts::base::StorageCache, events, rewards, storage};
 multiversx_sc::imports!();
 multiversx_sc::derive_imports!();
 
+#[derive(TopDecode, TopEncode, TypeAbi, PartialEq, Debug)]
+pub struct ContractDetails<M: ManagedTypeApi> {
+    pub rewards_reserve: BigUint<M>,
+    pub accumulated_rewards: BigUint<M>,
+    pub rewards_token_identifier: TokenIdentifier<M>,
+    pub rewards_per_block: BigUint<M>,
+    pub last_reward_block_nonce: u64,
+    pub max_apr: BigUint<M>,
+}
+
 #[multiversx_sc::module]
 pub trait ViewsModule:
     rewards::RewardsModule + events::EventsModule + config::ConfigModule + storage::StorageModule
@@ -20,5 +30,23 @@ pub trait ViewsModule:
         self.generate_aggregated_rewards(&mut storage_cache);
 
         self.calculate_caller_share_in_rewards(&caller, &mut storage_cache, bypass_liveliness)
+    }
+
+    #[view(contractDetails)]
+    fn contract_details(self) -> ContractDetails<Self::Api> {
+        let mut storage_cache = StorageCache::new(self);
+
+        self.generate_aggregated_rewards(&mut storage_cache);
+
+        let details = ContractDetails {
+            rewards_reserve: storage_cache.rewards_reserve.clone(),
+            accumulated_rewards: storage_cache.accumulated_rewards.clone(),
+            rewards_token_identifier: storage_cache.rewards_token_identifier.clone(),
+            rewards_per_block: storage_cache.rewards_per_block.clone(),
+            last_reward_block_nonce: storage_cache.last_reward_block_nonce,
+            max_apr: storage_cache.max_apr.clone(),
+        };
+
+        details
     }
 }
