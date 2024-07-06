@@ -367,6 +367,9 @@ where
     pub accumulated_rewards: BigUint<Api>,
     pub rewards_token_identifier: TokenIdentifier<Api>,
     pub rewards_per_block: BigUint<Api>,
+    pub rewards_per_share: BigUint<Api>,
+    pub administrator: ManagedAddress<Api>,
+    pub bond_contract_address: ManagedAddress<Api>,
     pub last_reward_block_nonce: u64,
     pub max_apr: BigUint<Api>,
 }
