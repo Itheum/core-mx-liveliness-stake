@@ -63,6 +63,10 @@ pub trait ConfigModule: events::EventsModule + storage::StorageModule {
     fn contract_is_ready(&self) -> bool {
         let mut is_ready = true;
 
+        if self.administrator().is_empty() {
+            is_ready = false;
+        }
+
         if !self.is_state_active(self.contract_state().get()) {
             is_ready = false;
         }
@@ -76,6 +80,10 @@ pub trait ConfigModule: events::EventsModule + storage::StorageModule {
         }
 
         if self.rewards_per_block().is_empty() {
+            is_ready = false;
+        }
+
+        if self.rewards_reserve().is_empty() {
             is_ready = false;
         }
 

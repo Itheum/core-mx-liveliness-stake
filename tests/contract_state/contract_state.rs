@@ -229,6 +229,27 @@ impl ContractState {
         }
     }
 
+    pub fn set_max_apr(&mut self, caller: TestAddress, max_apr: u64, expect: Option<ExpectError>) {
+        if let Some(expect) = expect {
+            self.world
+                .tx()
+                .from(caller)
+                .to(LIVELINESS_STAKE_CONTRACT_ADDRESS)
+                .typed(liveliness_proxy)
+                .set_max_apr(max_apr)
+                .with_result(expect)
+                .run();
+        } else {
+            self.world
+                .tx()
+                .from(caller)
+                .to(LIVELINESS_STAKE_CONTRACT_ADDRESS)
+                .typed(liveliness_proxy)
+                .set_max_apr(max_apr)
+                .run();
+        }
+    }
+
     pub fn set_rewards_token_identifier(
         &mut self,
         caller: TestAddress,
