@@ -33,12 +33,12 @@ fn admin_endpoint() {
     contract_state.set_rewards_token_identifier(ADMIN_ADDRESS, ANOTHER_TOKEN_IDENTIFIER, None);
     contract_state.set_rewards_token_identifier(ADMIN_ADDRESS, ITHEUM_TOKEN_IDENTIFIER, None);
 
-    contract_state.set_per_block_rewards(OWNER_ADDRESS, 2_000_0000u64, 18, None);
-    contract_state.set_per_block_rewards(ADMIN_ADDRESS, 2_000_0000u64, 18, None);
+    contract_state.set_per_block_rewards(OWNER_ADDRESS, 20_000_000_u64, 18, None);
+    contract_state.set_per_block_rewards(ADMIN_ADDRESS, 20_000_000_u64, 18, None);
 
     contract_state.set_per_block_rewards(
         FIRST_USER_ADDRESS,
-        2_000_0000u64,
+        20_000_000_u64,
         18,
         Some(ExpectError(4, "Not privileged")),
     );

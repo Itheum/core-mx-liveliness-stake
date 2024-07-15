@@ -17,35 +17,35 @@ fn contract_ready_test() {
 
     contract.init();
 
-    assert_eq!(false, contract.contract_is_ready());
+    assert!(!contract.contract_is_ready());
 
     contract.administrator().set(managed_address!(
         &AddressValue::from("address:admin").to_address()
     ));
 
-    assert_eq!(false, contract.contract_is_ready());
+    assert!(!contract.contract_is_ready());
 
     contract.contract_state().set(State::Active);
 
-    assert_eq!(false, contract.contract_is_ready());
+    assert!(!contract.contract_is_ready());
 
     contract.bond_contract_address().set(managed_address!(
         &AddressValue::from("address:bond").to_address()
     ));
 
-    assert_eq!(false, contract.contract_is_ready());
+    assert!(!contract.contract_is_ready());
 
     contract
         .rewards_token_identifier()
         .set(managed_token_id!(b"Token-124"));
 
-    assert_eq!(false, contract.contract_is_ready());
+    assert!(!contract.contract_is_ready());
 
     contract.rewards_reserve().set(managed_biguint!(100u64));
 
-    assert_eq!(false, contract.contract_is_ready());
+    assert!(!contract.contract_is_ready());
 
     contract.rewards_per_block().set(managed_biguint!(100u64));
 
-    assert_eq!(true, contract.contract_is_ready());
+    assert!(contract.contract_is_ready());
 }

@@ -1,11 +1,10 @@
-use multiversx_sc::types::{BigInt, BigUint, ManagedBuffer, ReturnsResult};
+use multiversx_sc::types::{BigUint, ReturnsResult};
 use multiversx_sc_scenario::ExpectError;
 
 use multiversx_sc_scenario::*;
 
 use core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy as life_bonding_proxy;
 use core_mx_liveliness_stake::liveliness_stake_proxy::CoreMxLivelinessStakeProxy as liveliness_proxy;
-use num_traits::ToBytes;
 
 use crate::{
     contract_state::contract_state::{

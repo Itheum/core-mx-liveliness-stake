@@ -41,7 +41,9 @@ pub trait ViewsModule:
 
         self.generate_aggregated_rewards(&mut storage_cache);
 
-        let details = ContractDetails {
+        
+
+        ContractDetails {
             rewards_reserve: storage_cache.rewards_reserve.clone(),
             accumulated_rewards: storage_cache.accumulated_rewards.clone(),
             rewards_token_identifier: storage_cache.rewards_token_identifier.clone(),
@@ -51,8 +53,6 @@ pub trait ViewsModule:
             max_apr: storage_cache.max_apr.clone(),
             administrator: self.administrator().get(),
             bond_contract_address: self.bond_contract_address().get(),
-        };
-
-        details
+        }
     }
 }
