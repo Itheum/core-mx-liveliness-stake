@@ -27,7 +27,7 @@ pub trait StorageModule {
     #[storage_mapper("rewards_per_share")]
     fn rewards_per_share(&self) -> SingleValueMapper<BigUint>;
 
-    #[view(addresLastRewardPerShare)]
+    #[view(addressLastRewardPerShare)]
     #[storage_mapper("address_last_reward_per_share")]
     fn address_last_reward_per_share(&self, address: &ManagedAddress)
         -> SingleValueMapper<BigUint>;
