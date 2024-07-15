@@ -42,7 +42,7 @@ multiversx_sc_wasm_adapter::endpoints! {
         rewardsPerBlock => rewards_per_block
         lastRewardBlockNonce => last_reward_block_nonce
         rewardsPerShare => rewards_per_share
-        addresLastRewardPerShare => address_last_reward_per_share
+        addressLastRewardPerShare => address_last_reward_per_share
         maxApr => max_apr
         claimableRewards => claimable_rewards
         contractDetails => contract_details

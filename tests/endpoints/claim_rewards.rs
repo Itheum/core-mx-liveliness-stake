@@ -1,10 +1,11 @@
-use multiversx_sc::types::{BigUint, ReturnsResult};
+use multiversx_sc::types::{BigInt, BigUint, ManagedBuffer, ReturnsResult};
 use multiversx_sc_scenario::ExpectError;
 
 use multiversx_sc_scenario::*;
 
 use core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy as life_bonding_proxy;
 use core_mx_liveliness_stake::liveliness_stake_proxy::CoreMxLivelinessStakeProxy as liveliness_proxy;
+use num_traits::ToBytes;
 
 use crate::{
     contract_state::contract_state::{
@@ -343,4 +344,103 @@ fn claim_rewards_tests() {
         .world
         .check_account(FIRST_USER_ADDRESS)
         .esdt_balance(ITHEUM_TOKEN_IDENTIFIER, BigIntDec::from(684u64, 18u32));
+}
+
+#[test]
+fn claim_rewards_max_apr_tests() {
+    let mut state = ContractState::new();
+
+    state.deploy_and_set(38u64, 16u32); // 0.38 rewards per block
+    state.bond_deploy_and_set(7_889_400u64, 1000); // 1.000 * 10^18
+    state.set_contract_state_active(OWNER_ADDRESS, None);
+
+    state.top_up_rewards(OWNER_ADDRESS, 2_000_000u64, None);
+
+    state.world.current_block().block_nonce(1u64);
+
+    state.bond_whitelist_for_bond(
+        OWNER_ADDRESS,
+        FIRST_USER_ADDRESS,
+        DATA_NFT_TOKEN_IDENTIFIER,
+        1u64,
+        None,
+    );
+
+    state.start_produce_rewards(OWNER_ADDRESS, None);
+
+    state.bond(
+        FIRST_USER_ADDRESS,
+        ITHEUM_TOKEN_IDENTIFIER,
+        DATA_NFT_TOKEN_IDENTIFIER,
+        1u64,
+        7_889_400u64,
+        1_000u64,
+        None,
+    );
+
+    state.bond_whitelist_for_bond(
+        OWNER_ADDRESS,
+        SECOND_USER_ADDRESS,
+        DATA_NFT_TOKEN_IDENTIFIER,
+        2u64,
+        None,
+    );
+
+    state.bond_whitelist_for_bond(
+        OWNER_ADDRESS,
+        SECOND_USER_ADDRESS,
+        DATA_NFT_TOKEN_IDENTIFIER,
+        3u64,
+        None,
+    );
+
+    state.bond_whitelist_for_bond(
+        OWNER_ADDRESS,
+        SECOND_USER_ADDRESS,
+        DATA_NFT_TOKEN_IDENTIFIER,
+        4u64,
+        None,
+    );
+
+    state.bond(
+        SECOND_USER_ADDRESS,
+        ITHEUM_TOKEN_IDENTIFIER,
+        DATA_NFT_TOKEN_IDENTIFIER,
+        2u64,
+        7_889_400u64,
+        1_000u64,
+        None,
+    );
+
+    state.world.current_block().block_nonce(432_000u64); // 1 month passed
+
+    let contract_details = state
+        .world
+        .query()
+        .to(LIVELINESS_STAKE_CONTRACT_ADDRESS)
+        .typed(liveliness_proxy)
+        .contract_details()
+        .returns(ReturnsResult)
+        .run();
+
+    assert_eq!(
+        contract_details.accumulated_rewards,
+        BigIntDec::from(16415962u64, 16u32) //164159,62 tokens
+    );
+
+    state.set_max_apr(OWNER_ADDRESS, 100u64, None); // 1%
+
+    let contract_details = state
+        .world
+        .query()
+        .to(LIVELINESS_STAKE_CONTRACT_ADDRESS)
+        .typed(liveliness_proxy)
+        .contract_details()
+        .returns(ReturnsResult)
+        .run();
+
+    assert_eq!(
+        contract_details.accumulated_rewards,
+        BigUint::from(1643831811263317948250u128)
+    ); // 1.643,831 tokens which is ~ 1% of rewards without apr
 }

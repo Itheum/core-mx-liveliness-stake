@@ -12,9 +12,27 @@ pub trait RewardsModule:
     storage::StorageModule + config::ConfigModule + events::EventsModule
 {
     fn generate_aggregated_rewards(&self, storage_cache: &mut StorageCache<Self>) {
-        let extra_rewards = self.calculate_rewards_since_last_allocation(storage_cache);
+        let last_reward_nonce = self.last_reward_block_nonce().get();
+        let extra_rewards_unbounded = self.calculate_rewards_since_last_allocation(storage_cache);
+        let max_apr = self.max_apr().get();
 
-        if extra_rewards > BigUint::zero() {
+        let extra_rewards: BigUint;
+        if max_apr > BigUint::zero() {
+            let extra_rewards_apr_bounded_per_block =
+                self.get_amount_apr_bounded(&storage_cache.rewards_reserve);
+
+            let current_block_nonce = self.blockchain().get_block_nonce();
+
+            let block_nonce_diff = current_block_nonce - last_reward_nonce;
+
+            let extra_rewards_apr_bounded = extra_rewards_apr_bounded_per_block * block_nonce_diff;
+
+            extra_rewards = core::cmp::min(extra_rewards_unbounded, extra_rewards_apr_bounded);
+        } else {
+            extra_rewards = extra_rewards_unbounded;
+        }
+
+        if extra_rewards > BigUint::zero() && extra_rewards <= storage_cache.rewards_reserve {
             let total_staked_amount = self
                 .tx()
                 .to(self.bond_contract_address().get())

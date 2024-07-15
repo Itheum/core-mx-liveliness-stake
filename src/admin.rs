@@ -3,8 +3,9 @@ use core_mx_life_bonding_sc::errors::{
 };
 
 use crate::{
-    config::{self, State},
+    config::{self, State, MAX_PERCENT},
     contexts::base::StorageCache,
+    errors::ERR_INVALID_VALUE,
     events, only_privileged, rewards, storage,
 };
 
@@ -37,14 +38,16 @@ pub trait AdminModule:
         self.contract_state_event(State::Inactive);
     }
 
+    // not used (useful to enforce a max APR)
     #[endpoint(setMaxApr)]
     fn set_max_apr(&self, max_apr: BigUint) {
         only_privileged!(self, ERR_NOT_PRIVILEGED);
 
+        require!(max_apr <= MAX_PERCENT, ERR_INVALID_VALUE);
+        self.max_apr().set(max_apr);
+
         let mut storage_cache = StorageCache::new(self);
         self.generate_aggregated_rewards(&mut storage_cache);
-
-        self.max_apr().set(max_apr);
     }
 
     #[endpoint(setRewardsTokenIdentifier)]
