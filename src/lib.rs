@@ -28,7 +28,9 @@ pub trait CoreMxLivelinessStake:
     fn init(&self) {}
 
     #[upgrade]
-    fn upgrade(&self) {}
+    fn upgrade(&self) {
+        self.set_contract_state_inactive();
+    }
 
     #[endpoint(claimRewards)]
     fn claim_rewards(&self) {
@@ -40,7 +42,21 @@ pub trait CoreMxLivelinessStake:
 
         self.generate_aggregated_rewards(&mut storage_cache);
 
+        let user_last_rewards_per_share = self.address_last_reward_per_share(&caller).get();
+
         let rewards = self.calculate_caller_share_in_rewards(&caller, &mut storage_cache, false);
+
+        self.claim_rewards_event(
+            &caller,
+            &rewards,
+            self.blockchain().get_block_timestamp(),
+            self.blockchain().get_block_nonce(),
+            &storage_cache.rewards_reserve,
+            &storage_cache.accumulated_rewards,
+            &storage_cache.rewards_per_share,
+            &user_last_rewards_per_share,
+            &storage_cache.rewards_per_block,
+        );
 
         if rewards > BigUint::zero() {
             storage_cache.accumulated_rewards -= &rewards;

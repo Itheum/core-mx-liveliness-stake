@@ -17,7 +17,7 @@ TOKEN_HEX="0x$(echo -n ${TOKEN} | xxd -p -u | tr -d '\n')"
 # --bytecode output-docker/core-mx-life-bonding-sc/core-mx-life-bonding-sc.wasm \
 deploy(){
     mxpy --verbose contract deploy \
-    --bytecode output/core-mx-liveliness-stake.wasm\
+    --bytecode output/core-mx-liveliness-stake.wasm \
     --outfile deployOutput \
     --metadata-not-readable \
     --metadata-payable-by-sc \
@@ -43,7 +43,7 @@ deploy(){
 # in below code example we added --metadata-payable to add PAYABLE to the prop of the SC and removed --metadata-not-readable to make it READABLE
 upgrade(){
     mxpy --verbose contract upgrade ${ADDRESS} \
-    --bytecode output-docker/core-mx-life-bonding-sc/core-mx-life-bonding-sc.wasm \
+    --bytecode output/core-mx-liveliness-stake.wasm \
     --metadata-not-readable \
     --metadata-payable-by-sc \
     --pem ${WALLET} \

@@ -44,6 +44,7 @@ pub trait AdminModule:
         only_privileged!(self, ERR_NOT_PRIVILEGED);
 
         require!(max_apr <= MAX_PERCENT, ERR_INVALID_VALUE);
+        self.max_apr_event(&max_apr);
         self.max_apr().set(max_apr);
 
         let mut storage_cache = StorageCache::new(self);
@@ -53,8 +54,8 @@ pub trait AdminModule:
     #[endpoint(setRewardsTokenIdentifier)]
     fn set_rewards_token_identifier(&self, token_identifier: TokenIdentifier) {
         only_privileged!(self, ERR_NOT_PRIVILEGED);
+        self.rewards_token_identifier_event(&token_identifier);
         self.rewards_token_identifier().set(token_identifier);
-        // self.rewards_token_identifier_event(token_identifier);
     }
 
     #[endpoint(setPerBlockRewardAmount)]
@@ -63,9 +64,8 @@ pub trait AdminModule:
 
         let mut storage_cache = StorageCache::new(self);
         self.generate_aggregated_rewards(&mut storage_cache);
-
+        self.rewards_per_block_event(&per_block_amount);
         storage_cache.rewards_per_block = per_block_amount;
-        // self.rewards_per_block_event(rewards_per_block);
     }
 
     #[payable("*")]
@@ -81,7 +81,7 @@ pub trait AdminModule:
 
         let mut storage_cache = StorageCache::new(self);
         self.generate_aggregated_rewards(&mut storage_cache);
-
+        self.top_up_rewards_event(&payment.amount);
         storage_cache.rewards_reserve += payment.amount;
     }
 
@@ -97,12 +97,14 @@ pub trait AdminModule:
             "Insufficient rewards reserve"
         );
 
+        self.withdraw_rewards_event(&amount);
         storage_cache.rewards_reserve -= amount;
     }
 
     #[endpoint(startProduceRewards)]
     fn start_produce_rewards(&self) {
         only_privileged!(self, ERR_NOT_PRIVILEGED);
+        self.rewards_state_event(State::Active);
         self.rewards_state().set(State::Active);
         self.last_reward_block_nonce()
             .set(self.blockchain().get_block_nonce());
@@ -115,12 +117,14 @@ pub trait AdminModule:
         let mut storage_cache = StorageCache::new(self);
         self.generate_aggregated_rewards(&mut storage_cache);
 
+        self.rewards_state_event(State::Inactive);
         self.rewards_state().set(State::Inactive);
     }
 
     #[endpoint(setBondContractAddress)]
     fn set_bond_contract_address(&self, bond_contract_address: ManagedAddress) {
         only_privileged!(self, ERR_NOT_PRIVILEGED);
+        self.bond_contract_address_event(&bond_contract_address);
         self.bond_contract_address().set(bond_contract_address);
     }
 }
