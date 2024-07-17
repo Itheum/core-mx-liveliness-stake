@@ -1,7 +1,7 @@
 PROXY=https://devnet-gateway.multiversx.com
 CHAIN_ID="D"
 
-WALLET="../wallet.pem"
+WALLET="../wallet2.pem"
 USER="../wallet2.pem"
 
 
@@ -199,3 +199,20 @@ setBondContractAddress(){
     --chain ${CHAIN_ID} \
     --send || return
 }
+
+
+setMaxApr(){
+
+    # $1 = max apr (10000 = 100%)
+
+    mxpy --verbose contract call ${ADDRESS} \
+    --recall-nonce \
+    --pem=${WALLET} \
+    --gas-limit=6000000 \
+    --function "setMaxApr" \
+    --arguments $1 \
+    --proxy ${PROXY} \
+    --chain ${CHAIN_ID} \
+    --send || return
+
+ }
