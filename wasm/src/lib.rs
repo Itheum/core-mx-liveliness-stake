@@ -6,9 +6,9 @@
 
 // Init:                                 1
 // Upgrade:                              1
-// Endpoints:                           26
+// Endpoints:                           27
 // Async Callback (empty):               1
-// Total number of exported functions:  29
+// Total number of exported functions:  30
 
 #![no_std]
 
@@ -36,6 +36,7 @@ multiversx_sc_wasm_adapter::endpoints! {
         rewardsState => rewards_state
         getAdministrator => administrator
         bondContractAddress => bond_contract_address
+        generateAggregatedRewards => generate_rewards
         rewardsReserve => rewards_reserve
         accumulatedRewards => accumulated_rewards
         rewardsTokenIdentifier => rewards_token_identifier

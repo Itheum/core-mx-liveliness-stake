@@ -11,6 +11,11 @@ multiversx_sc::derive_imports!();
 pub trait RewardsModule:
     storage::StorageModule + config::ConfigModule + events::EventsModule
 {
+    #[endpoint(generateAggregatedRewards)]
+    fn generate_rewards(&self) {
+        let mut storage_cache = StorageCache::new(self);
+        self.generate_aggregated_rewards(&mut storage_cache);
+    }
     fn generate_aggregated_rewards(&self, storage_cache: &mut StorageCache<Self>) {
         let last_reward_nonce = self.last_reward_block_nonce().get();
         let extra_rewards_unbounded = self.calculate_rewards_since_last_allocation(storage_cache);

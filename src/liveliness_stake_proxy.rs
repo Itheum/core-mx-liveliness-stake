@@ -248,6 +248,15 @@ where
             .original_result()
     }
 
+    pub fn generate_rewards(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("generateAggregatedRewards")
+            .original_result()
+    }
+
     pub fn rewards_reserve(
         self,
     ) -> TxTypedCall<Env, From, To, NotPayable, Gas, BigUint<Env::Api>> {
@@ -310,7 +319,7 @@ where
     ) -> TxTypedCall<Env, From, To, NotPayable, Gas, BigUint<Env::Api>> {
         self.wrapped_tx
             .payment(NotPayable)
-            .raw_call("addresLastRewardPerShare")
+            .raw_call("addressLastRewardPerShare")
             .argument(&address)
             .original_result()
     }
