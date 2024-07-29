@@ -31,7 +31,7 @@ dependencies = [
 [[package]]
 name = "core-mx-life-bonding-sc"
 version = "2.0.0"
-source = "git+https://github.com/Itheum/core-mx-life-bonding-sc?branch=vault#35f7f5a3fd80747c52de483e8d986285d5dcf425"
+source = "git+https://github.com/Itheum/core-mx-life-bonding-sc?branch=vault#21498008add50d29a6dd213cdf2df98b31cc8695"
 dependencies = [
  "core-mx-liveliness-stake 0.0.0 (git+https://github.com/Itheum/core-mx-liveliness-stake.git?branch=main)",
  "multiversx-sc",

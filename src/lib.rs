@@ -96,10 +96,19 @@ pub trait CoreMxLivelinessStake:
             &storage_cache.rewards_per_block,
         );
 
-        self.tx()
-            .to(self.bond_contract_address().get())
-            .typed(core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy)
-            .stake_rewards(caller, token_identifier, rewards)
-            .sync_call();
+        if rewards > BigUint::zero() {
+            storage_cache.accumulated_rewards -= &rewards;
+
+            self.tx()
+                .to(self.bond_contract_address().get())
+                .typed(core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy)
+                .stake_rewards(caller, token_identifier, rewards.clone())
+                .esdt(EsdtTokenPayment::new(
+                    self.rewards_token_identifier().get(),
+                    0u64,
+                    rewards,
+                ))
+                .sync_call();
+        }
     }
 }
