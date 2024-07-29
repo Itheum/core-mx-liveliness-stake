@@ -419,6 +419,7 @@ impl ContractState {
         self.bond_set_bond_token(ADMIN_ADDRESS, ITHEUM_TOKEN_IDENTIFIER, None);
         self.bond_set_lock_period_and_bond(ADMIN_ADDRESS, lock_period, bond, None);
         self.bond_set_contract_state_active(OWNER_ADDRESS, None);
+        self.bond_set_liveliness_stake_address(OWNER_ADDRESS, None);
     }
 
     // bonding contract functions
@@ -431,6 +432,31 @@ impl ContractState {
             .code(BOND_CODE_PATH)
             .new_address(BONDING_CONTRACT_ADDRESS)
             .run();
+    }
+
+    pub fn bond_set_liveliness_stake_address(
+        &mut self,
+        caller: TestAddress,
+        expect: Option<ExpectError>,
+    ) {
+        if let Some(expect) = expect {
+            self.world
+                .tx()
+                .from(caller)
+                .to(BONDING_CONTRACT_ADDRESS)
+                .typed(life_bonding_proxy)
+                .set_liveliness_stake_address(LIVELINESS_STAKE_CONTRACT_ADDRESS)
+                .with_result(expect)
+                .run();
+        } else {
+            self.world
+                .tx()
+                .from(caller)
+                .to(BONDING_CONTRACT_ADDRESS)
+                .typed(life_bonding_proxy)
+                .set_liveliness_stake_address(LIVELINESS_STAKE_CONTRACT_ADDRESS)
+                .run();
+        }
     }
 
     pub fn bond_set_contract_state_active(

@@ -90,6 +90,19 @@ where
             .original_result()
     }
 
+    pub fn stake_rewards<
+        Arg0: ProxyArg<TokenIdentifier<Env::Api>>,
+    >(
+        self,
+        token_identifier: Arg0,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("stakeRewards")
+            .argument(&token_identifier)
+            .original_result()
+    }
+
     pub fn set_contract_state_active(
         self,
     ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {

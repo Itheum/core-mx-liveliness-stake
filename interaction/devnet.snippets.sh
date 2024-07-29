@@ -119,7 +119,7 @@ setPerBlockRewardAmount(){
     mxpy --verbose contract call ${ADDRESS} \
     --recall-nonce \
     --pem=${WALLET} \
-    --gas-limit=6000000 \
+    --gas-limit=9000000 \
     --function "setPerBlockRewardAmount" \
     --arguments $1 \
     --proxy ${PROXY} \
@@ -135,7 +135,7 @@ topUpRewards(){
     mxpy --verbose contract call ${ADDRESS} \
     --recall-nonce \
     --pem=${WALLET} \
-    --gas-limit=6000000 \
+    --gas-limit=100000000 \
     --function "ESDTTransfer" \
     --arguments ${TOKEN_HEX} $1 $method \
     --proxy ${PROXY} \

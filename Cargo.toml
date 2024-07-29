@@ -12,8 +12,7 @@ path = "src/lib.rs"
 version = "0.51.0"
 
 [dependencies]
- core-mx-life-bonding-sc = {git ="https://github.com/Itheum/core-mx-life-bonding-sc",branch = "develop"}
-
+ core-mx-life-bonding-sc = {git ="https://github.com/Itheum/core-mx-life-bonding-sc",branch = "vault"}
 
 [dev-dependencies.multiversx-sc-scenario]
 version = "0.51.0"
