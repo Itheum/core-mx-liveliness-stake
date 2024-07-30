@@ -1,9 +1,8 @@
 #![no_std]
 
 use contexts::base::StorageCache;
-use core_mx_life_bonding_sc::errors::{
-    ERR_CONTRACT_NOT_READY, ERR_ENDPOINT_CALLABLE_ONLY_BY_ACCEPTED_CALLERS,
-};
+
+use crate::errors::{ERR_CONTRACT_NOT_READY, ERR_ENDPOINT_CALLABLE_ONLY_BY_ACCEPTED_CALLERS};
 
 multiversx_sc::imports!();
 
@@ -13,6 +12,7 @@ pub mod contexts;
 pub mod errors;
 pub mod events;
 pub mod liveliness_stake_proxy;
+pub mod proxy_contracts;
 pub mod rewards;
 pub mod storage;
 pub mod views;
@@ -115,7 +115,7 @@ pub trait CoreMxLivelinessStake:
 
             self.tx()
                 .to(self.bond_contract_address().get())
-                .typed(core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy)
+                .typed(proxy_contracts::life_bonding_sc_proxy::LifeBondingContractProxy)
                 .stake_rewards(caller, token_identifier, rewards.clone())
                 .esdt(EsdtTokenPayment::new(
                     self.rewards_token_identifier().get(),

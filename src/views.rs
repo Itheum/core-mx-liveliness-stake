@@ -41,8 +41,6 @@ pub trait ViewsModule:
 
         self.generate_aggregated_rewards(&mut storage_cache);
 
-        
-
         ContractDetails {
             rewards_reserve: storage_cache.rewards_reserve.clone(),
             accumulated_rewards: storage_cache.accumulated_rewards.clone(),

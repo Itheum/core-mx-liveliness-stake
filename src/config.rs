@@ -1,6 +1,4 @@
-use core_mx_life_bonding_sc::errors::ERR_ALREADY_IN_STORAGE;
-
-use crate::{events, storage};
+use crate::{errors::ERR_ALREADY_IN_STORAGE, events, storage};
 
 multiversx_sc::imports!();
 multiversx_sc::derive_imports!();

@@ -1,4 +1,4 @@
-use multiversx_sc_scenario::{api::SingleTxApi, imports::*};
+use multiversx_sc_scenario::imports::*;
 
 use crate::utils::BigIntDec;
 

@@ -1,7 +1,7 @@
 use crate::{
     config::{self, BLOCKS_IN_YEAR, DIVISION_SAFETY_CONST, MAX_PERCENT},
     contexts::base::StorageCache,
-    events, storage,
+    events, proxy_contracts, storage,
 };
 
 multiversx_sc::imports!();
@@ -41,7 +41,7 @@ pub trait RewardsModule:
             let total_staked_amount = self
                 .tx()
                 .to(self.bond_contract_address().get())
-                .typed(core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy)
+                .typed(proxy_contracts::life_bonding_sc_proxy::LifeBondingContractProxy)
                 .total_bond_amount()
                 .returns(ReturnsResult)
                 .sync_call();
@@ -87,27 +87,11 @@ pub trait RewardsModule:
         storage_cache: &mut StorageCache<Self>,
         bypass_liveliness: bool,
     ) -> BigUint {
-        let total_staked_amount = self
+        let (total_staked_amount, user_stake_amount, liveliness_score) = self
             .tx()
             .to(self.bond_contract_address().get())
-            .typed(core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy)
-            .total_bond_amount()
-            .returns(ReturnsResult)
-            .sync_call();
-
-        let user_stake_amount = self
-            .tx()
-            .to(self.bond_contract_address().get())
-            .typed(core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy)
-            .get_address_bonds_total_value(caller)
-            .returns(ReturnsResult)
-            .sync_call();
-
-        let liveliness_score = self
-            .tx()
-            .to(self.bond_contract_address().get())
-            .typed(core_mx_life_bonding_sc::life_bonding_sc_proxy::LifeBondingContractProxy)
-            .get_address_bonds_avg_score(caller)
+            .typed(proxy_contracts::life_bonding_sc_proxy::LifeBondingContractProxy)
+            .get_address_bonds_info(caller)
             .returns(ReturnsResult)
             .sync_call();
 

@@ -1,11 +1,10 @@
-use core_mx_life_bonding_sc::errors::{
-    ERR_ALREADY_ACTIVE, ERR_ALREADY_INACTIVE, ERR_NOT_PRIVILEGED,
-};
-
 use crate::{
     config::{self, State, MAX_PERCENT},
     contexts::base::StorageCache,
-    errors::ERR_INVALID_VALUE,
+    errors::{
+        ERR_ALREADY_ACTIVE, ERR_ALREADY_INACTIVE, ERR_INVALID_AMOUNT, ERR_INVALID_TOKEN_IDENTIFIER,
+        ERR_INVALID_VALUE, ERR_NOT_PRIVILEGED,
+    },
     events, only_privileged, rewards, storage,
 };
 
@@ -76,7 +75,7 @@ pub trait AdminModule:
 
         require!(
             payment.token_identifier == self.rewards_token_identifier().get(),
-            "Invalid token identifier"
+            ERR_INVALID_TOKEN_IDENTIFIER
         );
 
         let mut storage_cache = StorageCache::new(self);
@@ -92,10 +91,7 @@ pub trait AdminModule:
         let mut storage_cache = StorageCache::new(self);
         self.generate_aggregated_rewards(&mut storage_cache);
 
-        require!(
-            storage_cache.rewards_reserve >= amount,
-            "Insufficient rewards reserve"
-        );
+        require!(storage_cache.rewards_reserve >= amount, ERR_INVALID_AMOUNT);
 
         self.withdraw_rewards_event(&amount);
         storage_cache.rewards_reserve -= amount;
