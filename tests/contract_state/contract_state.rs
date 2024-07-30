@@ -1,4 +1,4 @@
-use multiversx_sc_scenario::imports::*;
+use multiversx_sc_scenario::{api::SingleTxApi, imports::*};
 
 use crate::utils::BigIntDec;
 
@@ -392,13 +392,14 @@ impl ContractState {
     }
 
     pub fn claim_rewards(&mut self, caller: TestAddress, expect: Option<ExpectError>) {
+        let c = OptionalValue::<ManagedAddress<_>>::None;
         if let Some(expect) = expect {
             self.world
                 .tx()
                 .from(caller)
                 .to(LIVELINESS_STAKE_CONTRACT_ADDRESS)
                 .typed(liveliness_proxy)
-                .claim_rewards()
+                .claim_rewards(c)
                 .with_result(expect)
                 .run();
         } else {
@@ -407,7 +408,7 @@ impl ContractState {
                 .from(caller)
                 .to(LIVELINESS_STAKE_CONTRACT_ADDRESS)
                 .typed(liveliness_proxy)
-                .claim_rewards()
+                .claim_rewards(c)
                 .run();
         }
     }
