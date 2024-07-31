@@ -84,6 +84,21 @@ pub trait CoreMxLivelinessStake:
         }
     }
 
+    #[endpoint(setAddressRewardsPerShare)]
+    fn set_address_rewards_per_share(&self, address: ManagedAddress) {
+        let caller = self.blockchain().get_caller();
+
+        require!(
+            caller == self.bond_contract_address().get(),
+            ERR_ENDPOINT_CALLABLE_ONLY_BY_ACCEPTED_CALLERS
+        );
+
+        let rewards_per_share = self.rewards_per_share().get();
+
+        self.address_last_reward_per_share(&address)
+            .set(rewards_per_share);
+    }
+
     #[endpoint(stakeRewards)]
     fn stake_rewards(&self, token_identifier: TokenIdentifier) {
         require_contract_ready!(self, ERR_CONTRACT_NOT_READY);
