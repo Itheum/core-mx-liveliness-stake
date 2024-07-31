@@ -42,4 +42,11 @@ pub trait EventsModule {
         #[indexed] user_last_rewards_per_share: &BigUint,
         #[indexed] rewards_per_block: &BigUint,
     );
+
+    #[event("address_rewards_per_share_event")]
+    fn address_rewards_per_share_event(
+        &self,
+        #[indexed] address: &ManagedAddress,
+        #[indexed] rewards_per_share: &BigUint,
+    );
 }

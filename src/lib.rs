@@ -93,10 +93,14 @@ pub trait CoreMxLivelinessStake:
             ERR_ENDPOINT_CALLABLE_ONLY_BY_ACCEPTED_CALLERS
         );
 
-        let rewards_per_share = self.rewards_per_share().get();
+        if self.address_last_reward_per_share(&address).is_empty() {
+            let rewards_per_share = self.rewards_per_share().get();
 
-        self.address_last_reward_per_share(&address)
-            .set(rewards_per_share);
+            self.address_rewards_per_share_event(&address, &rewards_per_share);
+
+            self.address_last_reward_per_share(&address)
+                .set(rewards_per_share);
+        }
     }
 
     #[endpoint(stakeRewards)]

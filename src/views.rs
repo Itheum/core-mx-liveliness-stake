@@ -1,9 +1,15 @@
-use crate::{config, contexts::base::StorageCache, events, rewards, storage};
+use crate::{
+    config,
+    contexts::base::StorageCache,
+    events,
+    proxy_contracts::{self},
+    rewards, storage,
+};
 
 multiversx_sc::imports!();
 multiversx_sc::derive_imports!();
 
-#[derive(TopDecode, TopEncode, TypeAbi, PartialEq, Debug)]
+#[derive(TopDecode, TopEncode, NestedDecode, NestedEncode, TypeAbi, PartialEq, Debug)]
 pub struct ContractDetails<M: ManagedTypeApi> {
     pub rewards_reserve: BigUint<M>,
     pub accumulated_rewards: BigUint<M>,
@@ -14,6 +20,16 @@ pub struct ContractDetails<M: ManagedTypeApi> {
     pub bond_contract_address: ManagedAddress<M>,
     pub last_reward_block_nonce: u64,
     pub max_apr: BigUint<M>,
+}
+
+#[derive(TopDecode, TopEncode, NestedDecode, NestedEncode, TypeAbi, PartialEq, Debug)]
+pub struct UserData<M: ManagedTypeApi> {
+    pub total_staked_amount: BigUint<M>,
+    pub user_staked_amount: BigUint<M>,
+    pub liveliness_score: BigUint<M>,
+    pub accumulated_rewards: BigUint<M>,
+    pub accumulated_rewards_bypass: BigUint<M>,
+    pub vault_nonce: u64,
 }
 
 #[multiversx_sc::module]
@@ -52,5 +68,46 @@ pub trait ViewsModule:
             administrator: self.administrator().get(),
             bond_contract_address: self.bond_contract_address().get(),
         }
+    }
+
+    #[view(userDataOut)]
+    fn user_data_out(
+        &self,
+        address: ManagedAddress,
+        token_identifier: TokenIdentifier,
+    ) -> (ContractDetails<Self::Api>, UserData<Self::Api>) {
+        let (total_staked_amount, user_staked_amount, liveliness_score) = self
+            .tx()
+            .to(self.bond_contract_address().get())
+            .typed(proxy_contracts::life_bonding_sc_proxy::LifeBondingContractProxy)
+            .get_address_bonds_info(address.clone())
+            .returns(ReturnsResult)
+            .sync_call();
+
+        let address_nonce_vault = self
+            .tx()
+            .to(self.bond_contract_address().get())
+            .typed(proxy_contracts::life_bonding_sc_proxy::LifeBondingContractProxy)
+            .address_vault_nonce(address.clone(), token_identifier)
+            .returns(ReturnsResult)
+            .sync_call();
+
+        let accumulated_rewards = self.claimable_rewards(address.clone(), Some(true));
+
+        let accumulated_rewards_bypass = self.claimable_rewards(address, Option::<bool>::None);
+
+        let contract_config = self.contract_details();
+
+        (
+            contract_config,
+            UserData {
+                total_staked_amount,
+                user_staked_amount,
+                liveliness_score,
+                accumulated_rewards,
+                accumulated_rewards_bypass,
+                vault_nonce: address_nonce_vault,
+            },
+        )
     }
 }
